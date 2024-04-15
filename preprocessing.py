@@ -12,42 +12,29 @@ import re
 
 okt = Okt()
 tokenizer = Tokenizer()
-SEED = 1
 
 file_path = './beta_data.csv'
-docs = []
+docs = []  
 crimes = []
 
 data = pd.read_csv(file_path)
 
-# 종속 변수 y 생성
-y = data[['murder', 'fraud', 'assault', 'sexaul_misconduct']]
+for text in data['text']: #text열에 있는 데이터들을 하나 씩 가져옴
+    new_text = str(text).replace("\n",'')
+    pattern = r'[^a-zA-Z가-힣]'
+    new_text = re.sub(pattern=pattern, repl=' ', string=text)
 
-#print(data)
-#print(data.columns)
+    docs.append(okt.nouns(new_text))
 
-for text in data['text'] :
-  new_text = str(text)
-  docs.append(new_text)
+tokenizer.fit_on_texts(docs) 
 
-# for crime in data['murder', 'fraud', 'assault','sexaul_misconduct'] :
-#   new_crime = int(crime)
-#   crimes.append(int(crime))
+print(tokenizer.word_index)
 
-tokenizer.fit_on_texts(docs)
+docs = tokenizer.texts_to_sequences(docs) 
 
-print(y)
+max_len = max(len(item) for item in docs)
+voca_size = len(tokenizer.word_index) + 1
 
-# print(docs)
-# print(tokenizer.word_index)
-# print(tokenizer.word_counts)
-# docs = tokenizer.texts_to_sequences(docs) # 입력된 문장을 각 단어의 인덱스로 이루어진 순서형 데이터로 변환. 
-
-# max_len = max(len(item) for item in docs)
-# voca_size = len(tokenizer.word_index) + 1
-
-# print(max_len)
-# print(voca_size)
-
-# X_data = pad_sequences(docs, maxlen=max_len)  #패딩
+print(max_len)
+print(voca_size)
 
